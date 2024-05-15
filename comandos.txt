@@ -1,0 +1,39 @@
+1. Aplicación de los Últimos Parches del Sistema Operativo
+freebsd-update fetch
+freebsd-update install
+
+2. Habilitación de SSH para Conexiones Seguras
+echo 'Protocol 2' >> /etc/ssh/sshd_config
+echo 'PermitRootLogin no' >> /etc/ssh/sshd_config
+service sshd restart
+
+3. Implementación de Envoltorios TCP y Configuración Básica del Firewall
+echo "ALL: ALL" >> /etc/hosts.deny  # Denegar todo por defecto
+echo "ALL: 192.168.1.0/24" >> /etc/hosts.allow  # Permitir acceso desde la red local
+
+echo 'firewall_enable="YES"' >> /etc/rc.conf
+echo 'firewall_type="simple"' >> /etc/rc.conf
+service ipfw start
+
+4. Deshabilitación de Servicios de inetd No Necesarios
+sed -i '' -e '/telnet/s/^/#/' /etc/inetd.conf
+sed -i '' -e '/ftp/s/^/#/' /etc/inetd.conf
+service inetd restart
+
+5. Configuraciones de Seguridad en el Arranque del Sistema
+sed -i '' -e '/ttyd/s/on/off/' /etc/ttys
+service init restart
+
+6. Configuraciones para Optimizar el Kernel en Términos de Seguridad
+echo '*.* /var/log/all.log' >> /etc/syslog.conf
+service syslog restart
+
+7. Estrategias para el Registro y Monitoreo
+echo '*.* /var/log/all.log' >> /etc/syslog.conf
+service syslog restart
+
+8. Establecer Permisos Seguros en Archivos y Directorios
+chmod 1777 /tmp
+
+9. Eliminar Servicios de Autenticación Débiles
+sed -i '' -e 's/pam_rhosts_auth.so/pam_deny.so/' /etc/pam.d/*

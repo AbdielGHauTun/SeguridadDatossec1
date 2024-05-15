@@ -1,0 +1,20 @@
+#!/bin/bash
+# Firewall settings for Multi-Function Devices
+
+# Allow printing services on standard ports
+iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
+iptables -A INPUT -p tcp --dport 515 -j ACCEPT
+
+# Disable risky services
+iptables -A INPUT -p tcp --dport 23 -j DROP  # Telnet
+iptables -A INPUT -p tcp --dport 21 -j DROP  # FTP
+iptables -A INPUT -p tcp --dport 80 -j DROP  # HTTP
+
+# Enable HTTPS
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+# Block all other unspecified traffic
+iptables -A INPUT -j DROP
+
+# Save the iptables rules
+service iptables save

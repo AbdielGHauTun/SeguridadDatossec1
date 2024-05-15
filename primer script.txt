@@ -1,0 +1,47 @@
+import os
+import time
+from win32com.client import Dispatch
+
+def print_secure_document(printer_name, file_path):
+    """
+    Función para imprimir de manera segura un documento y medir el tiempo de impresión.
+    Asegúrate de que el documento y la impresora no contengan/manejen datos sensibles.
+    """
+    # Conecta con la aplicación de Word de forma segura (sin GUI)
+    word = Dispatch("Word.Application")
+    word.Visible = 0
+
+    try:
+        # Abre el documento desde un directorio seguro
+        doc = word.Documents.Open(file_path)
+        # Establece la impresora específica
+        word.ActivePrinter = printer_name
+        
+        # Inicia el tiempo de impresión
+        start_time = time.time()
+        
+        # Imprime el documento
+        doc.PrintOut()
+        
+        # Cierra el documento sin guardar cambios
+        doc.Close(SaveChanges=0)
+        
+        # Tiempo de finalización
+        end_time = time.time()
+    finally:
+        # Cierra Word de forma segura
+        word.Quit()
+
+    # Calcula y devuelve el tiempo de impresión
+    print_time = end_time - start_time
+    print(f"Tiempo de impresión: {print_time} segundos")
+
+    # Borra cualquier configuración o dato residual en la aplicación
+    os.system("echo y | del /F /Q " + file_path)
+
+# Configura los parámetros de seguridad
+printer_name = "Nombre_de_tu_impresora_segura"
+file_path = "C:\\gabrielht\\secure\\document.docx"
+
+# Ejecuta la función de impresión segura
+print_secure_document(printer_name, file_path)
